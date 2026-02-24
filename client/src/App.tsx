@@ -5,12 +5,36 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/not-found";
 
+// Import Pages
+import { HomePage } from "@/pages/HomePage";
+import { AuthPage } from "@/pages/auth/AuthPage";
+import { StudentDashboard } from "@/pages/student/StudentDashboard";
+import { PracticeInterviews } from "@/pages/student/PracticeInterviews";
+import { InterviewWizard } from "@/pages/student/InterviewWizard";
+import { AdminDashboard } from "@/pages/admin/AdminDashboard";
+import { MentorDashboard } from "@/pages/mentor/MentorDashboard";
+
 function Router() {
   return (
     <Switch>
-      {/* Add pages below */}
-      {/* <Route path="/" component={Home}/> */}
-      {/* Fallback to 404 */}
+      <Route path="/" component={HomePage} />
+      <Route path="/auth" component={AuthPage} />
+      
+      {/* Student Routes */}
+      <Route path="/student/dashboard" component={StudentDashboard} />
+      <Route path="/student/practice" component={PracticeInterviews} />
+      <Route path="/student/interview/:id" component={InterviewWizard} />
+      {/* Fallback for resume upload as requested in scope but not fully fleshed out page, 
+          would normally route to a component. For now pointing to dashboard. */}
+      <Route path="/student/resume" component={StudentDashboard} />
+
+      {/* Mentor Routes */}
+      <Route path="/mentor/dashboard" component={MentorDashboard} />
+      <Route path="/mentor/students" component={MentorDashboard} />
+
+      {/* Admin Routes */}
+      <Route path="/admin/dashboard" component={AdminDashboard} />
+
       <Route component={NotFound} />
     </Switch>
   );
