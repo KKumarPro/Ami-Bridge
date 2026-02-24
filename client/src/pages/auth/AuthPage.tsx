@@ -1,16 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
+import { Link, useSearch } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2 } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader2, ArrowLeft, User, GraduationCap, Shield } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function AuthPage() {
+  const search = useSearch();
   const [isLogin, setIsLogin] = useState(true);
   const { login, register, isLoggingIn, isRegistering } = useAuth();
+  
+  useEffect(() => {
+    const params = new URLSearchParams(search);
+    const mode = params.get("mode");
+    if (mode === "signup") setIsLogin(false);
+    else if (mode === "login") setIsLogin(true);
+  }, [search]);
   
   // Form state
   const [email, setEmail] = useState("");
@@ -35,6 +44,15 @@ export function AuthPage() {
 
   return (
     <div className="min-h-screen bg-muted/30 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+      {/* Back button */}
+      <div className="absolute top-8 left-8 z-20">
+        <Button variant="ghost" asChild className="gap-2">
+          <Link href="/">
+            <ArrowLeft className="w-4 h-4" /> Back to Home
+          </Link>
+        </Button>
+      </div>
+
       {/* Decorative background */}
       <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-primary/20 blur-[120px]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-secondary/20 blur-[120px]" />
@@ -57,6 +75,25 @@ export function AuthPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            <div className="mb-6">
+              <Label className="mb-3 block text-center text-sm font-medium text-muted-foreground uppercase tracking-wider">
+                Select your role
+              </Label>
+              <Tabs value={role} onValueChange={(v: any) => setRole(v)} className="w-full">
+                <TabsList className="grid w-full grid-cols-3 h-12 p-1 bg-muted/50">
+                  <TabsTrigger value="student" className="gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                    <GraduationCap className="w-4 h-4" /> Student
+                  </TabsTrigger>
+                  <TabsTrigger value="mentor" className="gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                    <User className="w-4 h-4" /> Mentor
+                  </TabsTrigger>
+                  <TabsTrigger value="admin" className="gap-2 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+                    <Shield className="w-4 h-4" /> Admin
+                  </TabsTrigger>
+                </TabsList>
+              </Tabs>
+            </div>
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <AnimatePresence mode="popLayout">
                 {!isLogin && (
@@ -75,19 +112,6 @@ export function AuthPage() {
                         onChange={(e) => setName(e.target.value)} 
                         className="bg-background"
                       />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="role">Role</Label>
-                      <Select value={role} onValueChange={(v: any) => setRole(v)}>
-                        <SelectTrigger className="bg-background">
-                          <SelectValue placeholder="Select role" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="student">Student</SelectItem>
-                          <SelectItem value="mentor">Mentor</SelectItem>
-                          <SelectItem value="admin">Administrator</SelectItem>
-                        </SelectContent>
-                      </Select>
                     </div>
                   </motion.div>
                 )}
@@ -125,7 +149,13 @@ export function AuthPage() {
                 className="w-full h-11 text-base font-semibold hover-elevate active-elevate-2 shadow-md shadow-primary/20 mt-6"
                 disabled={isPending}
               >
-                {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : isLogin ? "Sign In" : "Sign Up"}
+                {isPending ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : isLogin ? (
+                  `Sign In as ${role.charAt(0).toUpperCase() + role.slice(1)}`
+                ) : (
+                  `Sign Up as ${role.charAt(0).toUpperCase() + role.slice(1)}`
+                )}
               </Button>
             </form>
 

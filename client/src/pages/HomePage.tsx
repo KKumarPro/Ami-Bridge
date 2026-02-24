@@ -23,10 +23,10 @@ export function HomePage() {
           </div>
           <div className="flex gap-4">
             <Button variant="ghost" asChild className="hidden sm:inline-flex hover-elevate">
-              <Link href="/auth">Sign In</Link>
+              <Link href="/auth?mode=login">Sign In</Link>
             </Button>
             <Button asChild className="hover-elevate active-elevate-2 shadow-lg shadow-primary/20">
-              <Link href="/auth">Get Started</Link>
+              <Link href="/auth?mode=signup">Get Started</Link>
             </Button>
           </div>
         </div>
@@ -62,7 +62,7 @@ export function HomePage() {
               className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
             >
               <Button size="lg" className="h-14 px-8 text-lg hover-elevate active-elevate-2 shadow-xl shadow-primary/25" asChild>
-                <Link href="/auth">
+                <Link href="/auth?mode=signup">
                   Start Practicing <ArrowRight className="ml-2 w-5 h-5" />
                 </Link>
               </Button>

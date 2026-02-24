@@ -492,7 +492,7 @@ async function seedDatabase() {
     // Create students
     const student1 = await storage.createUser({
       name: 'Demo Student',
-      email: 'Demo',
+      email: 'demo@skillbridge.com',
       password: await bcrypt.hash('12345', SALT_ROUNDS),
       role: 'student'
     });
