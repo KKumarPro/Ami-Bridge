@@ -1,0 +1,516 @@
+PROJECT NAME:
+
+SkillBridge
+
+OBJECTIVE:
+
+Build a clean, secure, full-stack web application using:
+
+Node.js
+
+Express.js
+
+PostgreSQL
+
+EJS (templating engine)
+
+Bootstrap 5 (modern UI)
+
+MVC Architecture
+
+JWT authentication with HTTP-only cookies
+
+The application must support three fully separated roles:
+
+Student
+
+Mentor
+
+Administrator
+
+The platform focuses on:
+
+Structured company-wise interview practice
+
+Placement Readiness Score (PRS) tracking
+
+Resume upload and manual scoring
+
+Mentor review system
+
+Admin analytics dashboard
+
+This is a professional academic-to-industry placement tracking system.
+
+🏗 APPLICATION STRUCTURE REQUIREMENTS
+
+Follow strict MVC structure:
+
+/config
+/models
+/controllers
+/routes
+/middlewares
+/views
+/layouts
+/partials
+/student
+/mentor
+/admin
+/public
+/css
+/js
+/uploads
+server.js
+
+All business logic must be inside controllers.
+
+All SQL queries must be written in models or service layer functions.
+
+Do not mix SQL in routes.
+
+🗄 DATABASE DESIGN (STRICT DEFINITION)
+
+Create these tables with proper foreign keys and ON DELETE CASCADE where required:
+
+USERS
+
+id (Primary Key)
+
+name
+
+email (unique)
+
+password (hashed with bcrypt)
+
+role (student, mentor, admin)
+
+created_at (timestamp)
+
+STUDENT_PROFILES
+
+id
+
+user_id (Foreign key → users.id)
+
+branch
+
+year
+
+pr_score (default 0)
+
+coding_score (default 0)
+
+resume_score (default 0)
+
+mock_score (default 0)
+
+last_updated (timestamp)
+
+MENTOR_ASSIGNMENTS
+
+id
+
+mentor_id (users.id)
+
+student_id (users.id)
+
+COMPANIES
+
+id
+
+name
+
+description
+
+difficulty_level
+
+created_at
+
+INTERVIEW_QUESTIONS
+
+id
+
+company_id
+
+question_text
+
+correct_answer
+
+topic
+
+marks
+
+STUDENT_ATTEMPTS
+
+id
+
+student_id
+
+company_id
+
+total_score
+
+max_score
+
+attempted_at
+
+ATTEMPT_DETAILS
+
+id
+
+attempt_id
+
+question_id
+
+student_answer
+
+score_awarded
+
+RESUMES
+
+id
+
+student_id
+
+file_path
+
+admin_score
+
+uploaded_at
+
+MENTOR_FEEDBACK
+
+id
+
+mentor_id
+
+student_id
+
+notes
+
+performance_rating (1–5)
+
+created_at
+
+🔐 AUTHENTICATION & AUTHORIZATION
+
+Implement:
+
+POST /auth/register
+POST /auth/login
+GET /auth/logout
+
+Requirements:
+
+Password hashing using bcrypt
+
+JWT stored in HTTP-only cookies
+
+Role-based middleware:
+
+requireAuth
+
+requireStudent
+
+requireMentor
+
+requireAdmin
+
+After login:
+
+Student → /student/dashboard
+Mentor → /mentor/dashboard
+Admin → /admin/dashboard
+
+Unauthorized access must redirect to login.
+
+the login/sognup is required when the user click on login as a student/mentor/admin, that askes for username and password, keep the demo username: Demo, and password: 12345
+
+🎓 STUDENT FEATURES (DEFINED CLEARLY)
+STUDENT DASHBOARD
+
+Must display:
+
+PRS Score (progress bar with percentage)
+
+Coding Score
+
+Resume Score
+
+Mock Score
+
+Assigned Mentor name
+
+Last 3 interview attempts
+
+Latest mentor feedback
+
+Navigation:
+
+Practice Interview
+
+Upload Resume
+
+View Feedback
+
+🧮 PLACEMENT READINESS SCORE (PRS)
+
+Define formula strictly:
+
+PRS =
+(0.5 × coding_score) +
+(0.3 × mock_score) +
+(0.2 × resume_score)
+
+Create function:
+
+recalculatePRS(studentId)
+
+This must:
+
+Fetch coding_score
+
+Fetch mock_score
+
+Fetch resume_score
+
+Update pr_score field
+
+Call this function whenever:
+
+Interview attempt completed
+
+Resume scored
+
+Mentor gives performance rating
+
+🏢 COMPANY-WISE INTERVIEW SYSTEM
+
+FLOW:
+
+Student selects company from dropdown.
+
+System fetches all questions from that company.
+
+Display one question per page.
+
+Provide:
+
+Question text
+
+Topic tag
+
+Answer textarea
+
+Submit button
+
+On submission:
+
+Compare student answer with correct_answer (case-insensitive)
+
+If match → full marks
+
+Else → 0 marks (MVP level)
+
+Save result in ATTEMPT_DETAILS
+
+After last question:
+
+Calculate total_score
+
+Save in STUDENT_ATTEMPTS
+
+Update student coding_score:
+coding_score = average of last 5 attempts
+
+Call recalculatePRS()
+
+Display final result page:
+
+Total score
+
+Correct answers count
+
+Weak topics
+
+Improvement suggestion
+
+UI must be clean and minimal.
+
+📄 RESUME SYSTEM (MANUAL PROFESSIONAL METHOD)
+
+Students can upload resume PDF.
+
+Requirements:
+
+Use multer
+
+Accept only PDF
+
+Store in /uploads folder
+
+Save file path in database
+
+Resume is NOT auto-scored.
+
+Admin must:
+
+Open resume
+
+Assign score manually (0–100)
+
+After scoring:
+
+Update resume_score in student_profiles
+
+Call recalculatePRS()
+
+This makes system professional and realistic.
+
+👨‍🏫 MENTOR FEATURES
+Mentor Dashboard
+
+Must show:
+
+List of assigned students
+
+Their PRS
+
+Coding score
+
+Resume score
+
+Last activity
+
+Mentor can:
+
+View full student profile
+
+Submit performance feedback
+
+Feedback form:
+
+Notes
+
+Performance rating (1–5)
+
+After submission:
+
+Update mock_score = average of performance_rating × 20
+
+Call recalculatePRS()
+
+Mentor cannot edit PRS directly.
+
+👑 ADMIN FEATURES
+Admin Dashboard Must Show:
+
+Total students count
+
+Total mentors
+
+Total companies
+
+Average PRS
+
+Top 5 students by PRS
+
+Company participation stats
+
+Use Chart.js for:
+
+PRS distribution graph
+
+Company attempt frequency
+
+Admin can:
+
+Add companies
+
+Add interview questions
+
+Assign mentors to students
+
+View resumes
+
+Score resumes
+
+🎨 PROFESSIONAL UI REQUIREMENTS
+
+Use Bootstrap 5
+
+Sidebar layout
+
+Role-based navigation menu
+
+Card-based dashboards
+
+Clean typography
+
+Consistent spacing
+
+Proper form validation
+
+Toast notifications for success/failure
+
+Include:
+
+Navbar
+
+Footer
+
+Logout button visible
+
+UI must not look like student project.
+It must look like SaaS dashboard.
+
+🛡 SECURITY REQUIREMENTS
+
+Password hashing
+
+Role validation middleware
+
+Input validation using express-validator
+
+Prevent SQL injection
+
+Prevent file upload of non-PDF
+
+Handle 404 and 500 error pages
+
+🧪 SEED DATA
+
+Create:
+
+1 Admin
+
+1 Mentor
+
+3 Students
+
+2 Companies
+
+6 Interview Questions per company
+
+📦 EXPECTED FINAL OUTPUT
+
+The system must:
+
+Run without crashes
+
+Connect properly to PostgreSQL
+
+Allow 3-role login
+
+Calculate PRS correctly
+
+Save interview attempts
+
+Allow resume upload + admin scoring
+
+Allow mentor feedback
+
+Display analytics dashboard
+
+Be clean and professional
