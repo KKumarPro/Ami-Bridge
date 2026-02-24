@@ -31,7 +31,7 @@ export function AuthPage() {
     e.preventDefault();
     try {
       if (isLogin) {
-        await login({ email, password });
+        await login({ email, password, role });
       } else {
         await register({ name, email, password, role });
       }

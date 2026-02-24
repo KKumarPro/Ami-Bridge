@@ -135,8 +135,8 @@ export async function registerRoutes(
       const input = api.auth.login.input.parse(req.body);
       
       const user = await storage.getUserByEmail(input.email);
-      if (!user) {
-        return res.status(401).json({ message: 'Invalid email or password' });
+      if (!user || user.role !== req.body.role) {
+        return res.status(401).json({ message: 'Invalid email, password, or role' });
       }
 
       const validPassword = await bcrypt.compare(input.password, user.password);
