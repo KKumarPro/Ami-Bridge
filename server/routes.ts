@@ -135,13 +135,17 @@ export async function registerRoutes(
       const input = api.auth.login.input.parse(req.body);
       
       const user = await storage.getUserByEmail(input.email);
-      if (!user || user.role !== req.body.role) {
+      if (!user) {
         return res.status(401).json({ message: 'Invalid email, password, or role' });
       }
 
       const validPassword = await bcrypt.compare(input.password, user.password);
       if (!validPassword) {
-        return res.status(401).json({ message: 'Invalid email or password' });
+        return res.status(401).json({ message: 'Invalid email, password, or role' });
+      }
+
+      if (user.role !== req.body.role) {
+        return res.status(401).json({ message: 'Invalid email, password, or role' });
       }
 
       req.session.userId = user.id;
@@ -248,8 +252,7 @@ export async function registerRoutes(
       }
 
       // Update attempt with final scores
-      await storage.createAttempt({
-        ...attempt,
+      await storage.updateAttempt(attempt.id, {
         totalScore,
         maxScore
       });

@@ -58,6 +58,7 @@ export interface IStorage {
 
   // Student Attempts
   createAttempt(attempt: InsertAttempt): Promise<StudentAttempt>;
+  updateAttempt(id: number, updates: Partial<StudentAttempt>): Promise<StudentAttempt>;
   createAttemptDetail(detail: InsertAttemptDetail): Promise<AttemptDetail>;
   getRecentAttempts(studentId: number, limit: number): Promise<StudentAttempt[]>;
   getLastFiveAttempts(studentId: number): Promise<StudentAttempt[]>;
@@ -184,6 +185,15 @@ export class DatabaseStorage implements IStorage {
   async createAttempt(attempt: InsertAttempt): Promise<StudentAttempt> {
     const [created] = await db.insert(studentAttempts).values(attempt).returning();
     return created;
+  }
+
+  async updateAttempt(id: number, updates: Partial<StudentAttempt>): Promise<StudentAttempt> {
+    const [updated] = await db
+      .update(studentAttempts)
+      .set(updates)
+      .where(eq(studentAttempts.id, id))
+      .returning();
+    return updated;
   }
 
   async createAttemptDetail(detail: InsertAttemptDetail): Promise<AttemptDetail> {

@@ -33,11 +33,13 @@ export function ProtectedLayout({ children, allowedRoles }: { children: React.Re
         <AppSidebar />
         <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
           <header className="h-14 flex items-center px-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-10 sticky top-0">
-            <SidebarTrigger className="hover-elevate active-elevate-2" />
-            <div className="ml-auto flex items-center gap-4">
+            <SidebarTrigger className="hover-elevate active-elevate-2 md:hidden mr-2" />
+            <div className="flex-1 flex items-center gap-2">
               <span className="text-sm font-medium text-muted-foreground hidden sm:block">
-                Welcome back, {user.name}
+                Welcome back, <span className="text-foreground font-bold">{user.name}</span>
               </span>
+            </div>
+            <div className="ml-auto flex items-center gap-4">
               <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold font-display shadow-sm shadow-primary/20">
                 {user.name.charAt(0).toUpperCase()}
               </div>

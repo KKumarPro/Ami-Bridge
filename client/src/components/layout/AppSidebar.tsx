@@ -34,6 +34,7 @@ export function AppSidebar() {
         return [
           { title: "Dashboard", url: "/student/dashboard", icon: Home },
           { title: "Practice Interviews", url: "/student/practice", icon: Briefcase },
+          { title: "Coding Challenges", url: "/student/coding", icon: Settings },
           { title: "My Resume", url: "/student/resume", icon: FileText },
         ];
       case "mentor":
