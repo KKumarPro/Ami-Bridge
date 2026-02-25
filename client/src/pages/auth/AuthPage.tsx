@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
-import { Link, useSearch } from "wouter";
+import { Link, useSearch, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,9 +11,16 @@ import { motion, AnimatePresence } from "framer-motion";
 
 export function AuthPage() {
   const search = useSearch();
+  const [, setLocation] = useLocation();
   const [isLogin, setIsLogin] = useState(true);
-  const { login, register, isLoggingIn, isRegistering } = useAuth();
+  const { user, login, register, isLoggingIn, isRegistering } = useAuth();
   
+  useEffect(() => {
+    if (user) {
+      setLocation(`/${user.role}/dashboard`);
+    }
+  }, [user, setLocation]);
+
   useEffect(() => {
     const params = new URLSearchParams(search);
     const mode = params.get("mode");
