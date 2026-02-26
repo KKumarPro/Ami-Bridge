@@ -11,8 +11,11 @@ import { AuthPage } from "@/pages/auth/AuthPage";
 import { StudentDashboard } from "@/pages/student/StudentDashboard";
 import { PracticeInterviews } from "@/pages/student/PracticeInterviews";
 import { CodingChallenges } from "@/pages/student/CodingChallenges";
+import { StudentResume } from "@/pages/student/StudentResume";
 import { InterviewWizard } from "@/pages/student/InterviewWizard";
 import { AdminDashboard } from "@/pages/admin/AdminDashboard";
+import { ManageCompanies } from "@/pages/admin/ManageCompanies";
+import { ReviewResumes } from "@/pages/admin/ReviewResumes";
 import { MentorDashboard } from "@/pages/mentor/MentorDashboard";
 
 function Router() {
@@ -26,9 +29,7 @@ function Router() {
       <Route path="/student/practice" component={PracticeInterviews} />
       <Route path="/student/coding" component={CodingChallenges} />
       <Route path="/student/interview/:id" component={InterviewWizard} />
-      {/* Fallback for resume upload as requested in scope but not fully fleshed out page, 
-          would normally route to a component. For now pointing to dashboard. */}
-      <Route path="/student/resume" component={StudentDashboard} />
+      <Route path="/student/resume" component={StudentResume} />
 
       {/* Mentor Routes */}
       <Route path="/mentor/dashboard" component={MentorDashboard} />
@@ -36,6 +37,8 @@ function Router() {
 
       {/* Admin Routes */}
       <Route path="/admin/dashboard" component={AdminDashboard} />
+      <Route path="/admin/companies" component={ManageCompanies} />
+      <Route path="/admin/resumes" component={ReviewResumes} />
 
       <Route component={NotFound} />
     </Switch>

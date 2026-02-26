@@ -276,17 +276,26 @@ export async function registerRoutes(
     }
   });
 
-  app.post(api.student.uploadResume.path, requireAuth, requireRole('student'), upload.single('file'), async (req, res) => {
+  app.post(api.student.uploadResume.path, requireAuth, requireRole('student'), upload.single('resume'), async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
       }
 
       const userId = req.session.userId!;
+      
+      // Auto-score resume simulation (60-95 range)
+      const autoScore = Math.floor(Math.random() * (95 - 60 + 1)) + 60;
+      
       const resume = await storage.createResume({
         studentId: userId,
-        filePath: req.file.path
+        filePath: req.file.path,
+        adminScore: autoScore
       });
+
+      // Update student profile with the new score
+      await storage.updateStudentProfile(userId, { resumeScore: autoScore });
+      await recalculatePRS(userId);
 
       res.status(201).json(resume);
     } catch (err) {
