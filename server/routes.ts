@@ -388,6 +388,16 @@ export async function registerRoutes(
     }
   });
 
+  app.get(api.admin.companies.path, requireAuth, requireRole('admin'), async (req, res) => {
+    try {
+      const companies = await storage.getAllCompanies();
+      res.json(companies);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  });
+
   app.post(api.admin.createCompany.path, requireAuth, requireRole('admin'), async (req, res) => {
     try {
       const input = api.admin.createCompany.input.parse(req.body);

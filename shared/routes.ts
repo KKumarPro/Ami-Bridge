@@ -222,6 +222,13 @@ export const api = {
         200: z.array(z.any()),
       }
     },
+    companies: {
+      method: 'GET' as const,
+      path: '/api/admin/companies' as const,
+      responses: {
+        200: z.array(CompanyResponse),
+      }
+    },
     scoreResume: {
       method: 'PATCH' as const,
       path: '/api/admin/resumes/:id/score' as const,

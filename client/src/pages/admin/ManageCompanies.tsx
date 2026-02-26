@@ -14,9 +14,9 @@ import { api } from "@shared/routes";
 
 export function ManageCompanies() {
   const { data: companies, isLoading } = useQuery({
-    queryKey: [api.student.companies.path],
+    queryKey: [api.admin.companies.path],
     queryFn: async () => {
-      const res = await fetch(api.student.companies.path, { credentials: "include" });
+      const res = await fetch(api.admin.companies.path, { credentials: "include" });
       return res.json();
     }
   });
