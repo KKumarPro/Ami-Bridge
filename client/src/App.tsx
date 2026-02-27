@@ -17,6 +17,7 @@ import { AdminDashboard } from "@/pages/admin/AdminDashboard";
 import { ManageCompanies } from "@/pages/admin/ManageCompanies";
 import { ReviewResumes } from "@/pages/admin/ReviewResumes";
 import { MentorDashboard } from "@/pages/mentor/MentorDashboard";
+import { MyStudents } from "@/pages/mentor/MyStudents";
 
 function Router() {
   return (
@@ -33,7 +34,7 @@ function Router() {
 
       {/* Mentor Routes */}
       <Route path="/mentor/dashboard" component={MentorDashboard} />
-      <Route path="/mentor/students" component={MentorDashboard} />
+      <Route path="/mentor/students" component={MyStudents} />
 
       {/* Admin Routes */}
       <Route path="/admin/dashboard" component={AdminDashboard} />

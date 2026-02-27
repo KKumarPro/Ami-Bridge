@@ -402,6 +402,23 @@ export async function registerRoutes(
     try {
       const input = api.admin.createCompany.input.parse(req.body);
       const company = await storage.createCompany(input);
+      
+      // Auto-create some demo questions for the new company
+      const demoQs = [
+        { q: 'Define System Design.', a: 'The process of defining architecture, components, modules, interfaces and data for a system.', topic: 'System Design' },
+        { q: 'What is normalization?', a: 'The process of organizing data in a database to reduce redundancy.', topic: 'Databases' }
+      ];
+      
+      for (const q of demoQs) {
+        await storage.createQuestion({
+          companyId: company.id,
+          questionText: q.q,
+          correctAnswer: q.a,
+          topic: q.topic,
+          marks: 10
+        });
+      }
+
       res.status(201).json(company);
     } catch (err) {
       if (err instanceof z.ZodError) {
@@ -490,10 +507,10 @@ export async function registerRoutes(
 
 async function seedDatabase() {
   try {
-    const existingUsers = await storage.getAllStudents();
-    if (existingUsers.length > 0) return;
+    const existingAdmin = await storage.getUserByEmail('admin@skillbridge.com');
+    if (existingAdmin) return; // Already seeded
 
-    console.log('Seeding database with demo data...');
+    console.log('Seeding database with extensive demo data...');
 
     // Create admin
     const admin = await storage.createUser({
@@ -511,126 +528,80 @@ async function seedDatabase() {
       role: 'mentor'
     });
 
-    // Create students
-    const student1 = await storage.createUser({
-      name: 'Demo Student',
-      email: 'demo@skillbridge.com',
-      password: await bcrypt.hash('12345', SALT_ROUNDS),
-      role: 'student'
-    });
+    const studentNames = [
+      'Demo Student', 'Alex Kumar', 'Maria Garcia', 'James Wilson', 'Sonia Gupta',
+      'Liam Chen', 'Emma Davis', 'Noah Smith', 'Olivia Brown', 'William Jones',
+      'Sophia Miller', 'Benjamin Taylor', 'Isabella Anderson', 'Mason Thomas', 'Mia White',
+      'Ethan Harris', 'Charlotte Martin', 'Lucas Thompson', 'Amelia Garcia', 'Alexander Martinez',
+      'Daniel Lee', 'Lily Wang', 'Ryan Choi', 'Grace Kim', 'Oliver Chen'
+    ];
 
-    const student2 = await storage.createUser({
-      name: 'Alex Kumar',
-      email: 'alex@student.com',
-      password: await bcrypt.hash('12345', SALT_ROUNDS),
-      role: 'student'
-    });
+    const branches = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Civil'];
 
-    const student3 = await storage.createUser({
-      name: 'Maria Garcia',
-      email: 'maria@student.com',
-      password: await bcrypt.hash('12345', SALT_ROUNDS),
-      role: 'student'
-    });
+    for (let i = 0; i < studentNames.length; i++) {
+      const email = i === 0 ? 'demo@skillbridge.com' : `student${i + 1}@skillbridge.com`;
+      const user = await storage.createUser({
+        name: studentNames[i],
+        email: email,
+        password: await bcrypt.hash('12345', SALT_ROUNDS),
+        role: 'student'
+      });
 
-    // Create student profiles
-    await storage.createStudentProfile({
-      userId: student1.id,
-      branch: 'Computer Science',
-      year: 3
-    });
-
-    await storage.createStudentProfile({
-      userId: student2.id,
-      branch: 'Information Technology',
-      year: 4
-    });
-
-    await storage.createStudentProfile({
-      userId: student3.id,
-      branch: 'Computer Science',
-      year: 2
-    });
-
-    // Assign mentor to students
-    await storage.assignMentor(mentor.id, student1.id);
-    await storage.assignMentor(mentor.id, student2.id);
-    await storage.assignMentor(mentor.id, student3.id);
+      const profile = await storage.createStudentProfile({
+        userId: user.id,
+        branch: branches[i % branches.length],
+        year: (i % 4) + 1,
+        codingScore: Math.floor(Math.random() * 40) + 50,
+        mockScore: Math.floor(Math.random() * 40) + 50,
+        resumeScore: Math.floor(Math.random() * 40) + 50
+      });
+      
+      await recalculatePRS(user.id);
+      await storage.assignMentor(mentor.id, user.id);
+    }
 
     // Create companies
-    const google = await storage.createCompany({
-      name: 'Google',
-      description: 'Leading tech company specializing in search, cloud computing, and AI',
-      difficultyLevel: 'hard'
-    });
+    const companiesData = [
+      { name: 'Google', description: 'Leading tech company specializing in search, cloud computing, and AI', level: 'hard' },
+      { name: 'Microsoft', description: 'Global technology company creating software, hardware, and cloud services', level: 'medium' },
+      { name: 'TCS', description: 'Global leader in IT services, consulting & business solutions', level: 'easy' },
+      { name: 'Wipro', description: 'Leading global information technology, consulting and business process services company', level: 'easy' },
+      { name: 'Infosys', description: 'Next-generation digital services and consulting', level: 'medium' },
+      { name: 'Amazon', description: 'E-commerce, cloud computing, digital streaming, and artificial intelligence', level: 'hard' },
+      { name: 'Meta', description: 'Social media and technology conglomerate', level: 'hard' }
+    ];
 
-    const microsoft = await storage.createCompany({
-      name: 'Microsoft',
-      description: 'Global technology company creating software, hardware, and cloud services',
-      difficultyLevel: 'medium'
-    });
+    const createdCompanies = [];
+    for (const data of companiesData) {
+      const company = await storage.createCompany({
+        name: data.name,
+        description: data.description,
+        difficultyLevel: data.level as any
+      });
+      createdCompanies.push(company);
+    }
 
-    // Create interview questions for Google
-    await storage.createQuestion({
-      companyId: google.id,
-      questionText: 'What is the time complexity of binary search?',
-      correctAnswer: 'O(log n)',
-      topic: 'Algorithms',
-      marks: 10
-    });
+    const commonQuestions = [
+      { q: 'What is the time complexity of binary search?', a: 'O(log n)', topic: 'Algorithms' },
+      { q: 'What does HTML stand for?', a: 'HyperText Markup Language', topic: 'Web Dev' },
+      { q: 'What is a primary key in SQL?', a: 'A unique identifier for a record in a table', topic: 'Databases' },
+      { q: 'Explain the concept of inheritance in OOP.', a: 'A mechanism where a new class inherits properties and behaviors from an existing class', topic: 'OOP' },
+      { q: 'What is the purpose of a constructor?', a: 'To initialize an object when it is created', topic: 'OOP' },
+      { q: 'What is the difference between let and var in JavaScript?', a: 'let is block-scoped, var is function-scoped', topic: 'JavaScript' },
+      { q: 'What is a closure in JavaScript?', a: 'A function bundled together with its lexical environment', topic: 'JavaScript' }
+    ];
 
-    await storage.createQuestion({
-      companyId: google.id,
-      questionText: 'Explain the difference between stack and heap memory.',
-      correctAnswer: 'Stack is used for static memory allocation and heap for dynamic memory allocation',
-      topic: 'Memory Management',
-      marks: 15
-    });
-
-    await storage.createQuestion({
-      companyId: google.id,
-      questionText: 'What is polymorphism in OOP?',
-      correctAnswer: 'The ability of objects to take on multiple forms',
-      topic: 'Object-Oriented Programming',
-      marks: 10
-    });
-
-    // Create interview questions for Microsoft
-    await storage.createQuestion({
-      companyId: microsoft.id,
-      questionText: 'What is a RESTful API?',
-      correctAnswer: 'An architectural style for building web services using HTTP methods',
-      topic: 'Web Development',
-      marks: 10
-    });
-
-    await storage.createQuestion({
-      companyId: microsoft.id,
-      questionText: 'Explain the SOLID principles.',
-      correctAnswer: 'Five design principles for writing maintainable software',
-      topic: 'Software Design',
-      marks: 15
-    });
-
-    await storage.createQuestion({
-      companyId: microsoft.id,
-      questionText: 'What is a database index?',
-      correctAnswer: 'A data structure that improves the speed of data retrieval operations',
-      topic: 'Databases',
-      marks: 10
-    });
-
-    // Add some feedback for demo student
-    await storage.createFeedback({
-      mentorId: mentor.id,
-      studentId: student1.id,
-      notes: 'Great progress on problem-solving skills. Keep practicing data structures.',
-      performanceRating: 4
-    });
-
-    // Update mock score for demo student
-    await storage.updateStudentProfile(student1.id, { mockScore: 80 });
-    await recalculatePRS(student1.id);
+    for (const company of createdCompanies) {
+      for (const qData of commonQuestions) {
+        await storage.createQuestion({
+          companyId: company.id,
+          questionText: qData.q,
+          correctAnswer: qData.a,
+          topic: qData.topic,
+          marks: 10
+        });
+      }
+    }
 
     console.log('Database seeded successfully!');
   } catch (err) {

@@ -21,7 +21,7 @@ export function PracticeInterviews() {
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1,2,3].map(i => <Skeleton key={i} className="h-64 w-full rounded-2xl" />)}
+            {[1,2,3,4,5].map(i => <Skeleton key={i} className="h-64 w-full rounded-2xl" />)}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -54,6 +54,11 @@ export function PracticeInterviews() {
                 </CardFooter>
               </Card>
             ))}
+            {(!companies || companies.length === 0) && (
+              <div className="col-span-full text-center py-12 text-muted-foreground">
+                <p>No companies available for practice yet. Contact Admin.</p>
+              </div>
+            )}
           </div>
         )}
       </div>

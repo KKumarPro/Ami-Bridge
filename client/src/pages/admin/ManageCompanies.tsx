@@ -13,11 +13,16 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@shared/routes";
 
 export function ManageCompanies() {
-  const { data: companies, isLoading } = useQuery({
+  const { data: companies, isLoading, refetch } = useQuery({
     queryKey: [api.admin.companies.path],
     queryFn: async () => {
       const res = await fetch(api.admin.companies.path, { credentials: "include" });
-      return res.json();
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || 'Failed to fetch companies');
+      }
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
     }
   });
   
@@ -34,6 +39,7 @@ export function ManageCompanies() {
     await createCompany.mutateAsync(formData as any);
     setIsOpen(false);
     setFormData({ name: "", description: "", difficultyLevel: "medium" });
+    refetch();
   };
 
   return (
