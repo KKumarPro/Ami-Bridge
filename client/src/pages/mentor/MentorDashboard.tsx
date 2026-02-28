@@ -28,10 +28,7 @@ export function MentorDashboard() {
           <Card className="bg-gradient-to-br from-primary to-primary/80 text-white shadow-xl border-none overflow-hidden">
             <CardContent className="p-8 flex items-center justify-between relative">
               <div className="relative z-10">
-                <div className="flex items-center gap-2 mb-2 text-white/80">
-                  <Award className="w-4 h-4" />
-                  <span className="font-bold uppercase tracking-widest text-xs">Top Performer</span>
-                </div>
+                <p className="text-xs font-bold uppercase tracking-widest text-white/80">Placement Readiness Score</p>
                 <h2 className="text-4xl font-black font-display mb-1">{topScorer.name}</h2>
                 <p className="text-white/60 font-medium">{topScorer.profile?.branch || "General Engineering"}</p>
               </div>

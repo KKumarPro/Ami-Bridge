@@ -507,39 +507,49 @@ export async function registerRoutes(
 
 async function seedDatabase() {
   try {
-    const existingAdmin = await storage.getUserByEmail('admin@skillbridge.com');
-    if (existingAdmin) return; // Already seeded
+    const existingUsers = await storage.getAllStudents();
+    if (existingUsers.length > 30) return; 
 
     console.log('Seeding database with extensive demo data...');
 
-    // Create admin
-    const admin = await storage.createUser({
-      name: 'Admin User',
-      email: 'admin@skillbridge.com',
-      password: await bcrypt.hash('12345', SALT_ROUNDS),
-      role: 'admin'
-    });
+    // Try to get or create admin
+    let admin = await storage.getUserByEmail('admin@skillbridge.com');
+    if (!admin) {
+      admin = await storage.createUser({
+        name: 'Admin User',
+        email: 'admin@skillbridge.com',
+        password: await bcrypt.hash('12345', SALT_ROUNDS),
+        role: 'admin'
+      });
+    }
 
-    // Create mentor
-    const mentor = await storage.createUser({
-      name: 'Dr. Sarah Johnson',
-      email: 'mentor@skillbridge.com',
-      password: await bcrypt.hash('12345', SALT_ROUNDS),
-      role: 'mentor'
-    });
+    // Try to get or create mentor
+    let mentor = await storage.getUserByEmail('mentor@skillbridge.com');
+    if (!mentor) {
+      mentor = await storage.createUser({
+        name: 'Dr. Sarah Johnson',
+        email: 'mentor@skillbridge.com',
+        password: await bcrypt.hash('12345', SALT_ROUNDS),
+        role: 'mentor'
+      });
+    }
 
     const studentNames = [
       'Demo Student', 'Alex Kumar', 'Maria Garcia', 'James Wilson', 'Sonia Gupta',
       'Liam Chen', 'Emma Davis', 'Noah Smith', 'Olivia Brown', 'William Jones',
       'Sophia Miller', 'Benjamin Taylor', 'Isabella Anderson', 'Mason Thomas', 'Mia White',
       'Ethan Harris', 'Charlotte Martin', 'Lucas Thompson', 'Amelia Garcia', 'Alexander Martinez',
-      'Daniel Lee', 'Lily Wang', 'Ryan Choi', 'Grace Kim', 'Oliver Chen'
+      'Daniel Lee', 'Lily Wang', 'Ryan Choi', 'Grace Kim', 'Oliver Chen', 'Emma Wilson', 
+      'Lucas Brown', 'Mia Davis', 'Noah Miller', 'Sophia Taylor'
     ];
 
     const branches = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Civil'];
 
     for (let i = 0; i < studentNames.length; i++) {
       const email = i === 0 ? 'demo@skillbridge.com' : `student${i + 1}@skillbridge.com`;
+      const existingUser = await storage.getUserByEmail(email);
+      if (existingUser) continue;
+
       const user = await storage.createUser({
         name: studentNames[i],
         email: email,
@@ -547,7 +557,7 @@ async function seedDatabase() {
         role: 'student'
       });
 
-      const profile = await storage.createStudentProfile({
+      await storage.createStudentProfile({
         userId: user.id,
         branch: branches[i % branches.length],
         year: (i % 4) + 1,
@@ -568,11 +578,20 @@ async function seedDatabase() {
       { name: 'Wipro', description: 'Leading global information technology, consulting and business process services company', level: 'easy' },
       { name: 'Infosys', description: 'Next-generation digital services and consulting', level: 'medium' },
       { name: 'Amazon', description: 'E-commerce, cloud computing, digital streaming, and artificial intelligence', level: 'hard' },
-      { name: 'Meta', description: 'Social media and technology conglomerate', level: 'hard' }
+      { name: 'Meta', description: 'Social media and technology conglomerate', level: 'hard' },
+      { name: 'Apple', description: 'Consumer electronics, software, and online services', level: 'hard' },
+      { name: 'Netflix', description: 'Streaming entertainment service', level: 'medium' },
+      { name: 'Adobe', description: 'Software company known for creative and multimedia products', level: 'medium' }
     ];
 
+    const allCompanies = await storage.getAllCompanies();
     const createdCompanies = [];
     for (const data of companiesData) {
+      const existing = allCompanies.find(c => c.name === data.name);
+      if (existing) {
+        createdCompanies.push(existing);
+        continue;
+      }
       const company = await storage.createCompany({
         name: data.name,
         description: data.description,
@@ -592,6 +611,9 @@ async function seedDatabase() {
     ];
 
     for (const company of createdCompanies) {
+      const existingQs = await storage.getQuestionsForCompany(company.id);
+      if (existingQs.length > 0) continue;
+
       for (const qData of commonQuestions) {
         await storage.createQuestion({
           companyId: company.id,
@@ -601,6 +623,30 @@ async function seedDatabase() {
           marks: 10
         });
       }
+    }
+
+    // Add some demo attempts for students
+    const students = await storage.getAllStudents();
+    for (const student of students.slice(0, 5)) {
+      const existingAttempts = await storage.getRecentAttempts(student.id, 1);
+      if (existingAttempts.length > 0) continue;
+
+      for (const company of createdCompanies.slice(0, 2)) {
+        await storage.createAttempt({
+          studentId: student.id,
+          companyId: company.id,
+          totalScore: Math.floor(Math.random() * 30) + 40,
+          maxScore: 70,
+        });
+      }
+
+      // Add demo feedback
+      await storage.createFeedback({
+        mentorId: mentor.id,
+        studentId: student.id,
+        notes: "Excellent progress in technical rounds. Focus more on system design concepts.",
+        performanceRating: 4
+      });
     }
 
     console.log('Database seeded successfully!');
