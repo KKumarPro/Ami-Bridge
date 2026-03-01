@@ -25,6 +25,21 @@ export function useResumes() {
   });
 }
 
+export function useCompanies() {
+  return useQuery({
+    queryKey: [api.admin.companies.path],
+    queryFn: async () => {
+      const res = await fetch(api.admin.companies.path, { credentials: "include" });
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || 'Failed to fetch companies');
+      }
+      const data = await res.json();
+      return Array.isArray(data) ? data : [];
+    }
+  });
+}
+
 export function useCreateCompany() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -42,6 +57,8 @@ export function useCreateCompany() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.admin.dashboard.path] });
+      queryClient.invalidateQueries({ queryKey: [api.admin.companies.path] });
+      queryClient.invalidateQueries({ queryKey: [api.student.companies.path] });
       toast({ title: "Company Created", description: "Company has been added to the system." });
     },
   });

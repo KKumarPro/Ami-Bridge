@@ -114,6 +114,12 @@ export async function registerRoutes(
           branch: input.branch,
           year: input.year
         });
+
+        // Auto-assign to the first available mentor so they appear in "My Students"
+        const mentors = await storage.getAllMentors();
+        if (mentors.length > 0) {
+          await storage.assignMentor(mentors[0].id, user.id);
+        }
       }
 
       req.session.userId = user.id;
