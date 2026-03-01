@@ -265,9 +265,15 @@ export async function registerRoutes(
 
       // Update coding score (average of last 5 attempts)
       const lastFive = await storage.getLastFiveAttempts(userId);
-      const avgScore = lastFive.length > 0 
-        ? Math.round(lastFive.reduce((sum, a) => sum + (a.totalScore / a.maxScore) * 100, 0) / lastFive.length)
-        : 0;
+      const attemptsWithScore = lastFive.filter(a => a.maxScore > 0);
+      let avgScore = 0;
+      if (attemptsWithScore.length > 0) {
+        const totalPercentage = attemptsWithScore.reduce((sum, a) => sum + (a.totalScore / a.maxScore) * 100, 0);
+        avgScore = Math.round(totalPercentage / attemptsWithScore.length);
+      }
+      
+      // Ensure avgScore is a valid number
+      if (isNaN(avgScore)) avgScore = 0;
       
       await storage.updateStudentProfile(userId, { codingScore: avgScore });
       await recalculatePRS(userId);
@@ -344,8 +350,13 @@ export async function registerRoutes(
 
       // Update mock score (average of all performance ratings * 20)
       const allFeedback = await storage.getAllFeedbackForStudent(input.studentId);
-      const avgRating = allFeedback.reduce((sum, f) => sum + f.performanceRating, 0) / allFeedback.length;
-      const mockScore = Math.round(avgRating * 20);
+      let mockScore = 0;
+      if (allFeedback.length > 0) {
+        const avgRating = allFeedback.reduce((sum, f) => sum + f.performanceRating, 0) / allFeedback.length;
+        mockScore = Math.round(avgRating * 20);
+      }
+      
+      if (isNaN(mockScore)) mockScore = 0;
 
       await storage.updateStudentProfile(input.studentId, { mockScore });
       await recalculatePRS(input.studentId);

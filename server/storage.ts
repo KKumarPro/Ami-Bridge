@@ -151,7 +151,7 @@ export class DatabaseStorage implements IStorage {
     const studentIds = assignments.map(a => a.studentId);
     if (studentIds.length === 0) return [];
 
-    return await db.select().from(users).where(sql`${users.id} = ANY(${studentIds})`);
+    return await db.select().from(users).where(sql`${users.id} = ANY(ARRAY[${sql.join(studentIds, sql`, `)}])`);
   }
 
   async createCompany(company: InsertCompany): Promise<Company> {
@@ -285,7 +285,7 @@ export class DatabaseStorage implements IStorage {
     const userIds = topProfiles.map(p => p.userId);
     if (userIds.length === 0) return [];
 
-    return await db.select().from(users).where(sql`${users.id} = ANY(${userIds})`);
+    return await db.select().from(users).where(sql`${users.id} = ANY(ARRAY[${sql.join(userIds, sql`, `)}])`);
   }
 
   async getPRSDistribution(): Promise<{ range: string; count: number }[]> {
