@@ -25,9 +25,14 @@ export function ManageCompanies() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createCompany.mutateAsync(formData as any);
-    setIsOpen(false);
-    setFormData({ name: "", description: "", difficultyLevel: "medium" });
+    try {
+      console.log("Submitting company data:", formData);
+      await createCompany.mutateAsync(formData as any);
+      setIsOpen(false);
+      setFormData({ name: "", description: "", difficultyLevel: "medium" });
+    } catch (error) {
+      console.error("Failed to create company:", error);
+    }
   };
 
   return (

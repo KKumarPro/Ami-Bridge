@@ -517,7 +517,11 @@ export async function registerRoutes(
   });
 
   // Seed database with demo data
-  await seedDatabase();
+  // Only seed if students table is empty or has very few records to ensure "constant" data
+  const studentCount = await storage.countUsersByRole('student');
+  if (studentCount < 5) {
+    await seedDatabase();
+  }
 
   return httpServer;
 }
