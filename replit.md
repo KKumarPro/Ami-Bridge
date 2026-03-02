@@ -1,10 +1,10 @@
-# SkillBridge - Student Placement Tracking System
+# Ami-Bridge - Student Placement Tracking System
 
 A professional academic-to-industry placement tracking platform built with React, TypeScript, Express.js, PostgreSQL, and modern UI components.
 
 ## Overview
 
-SkillBridge helps educational institutions track student placement readiness through three role-based dashboards:
+Ami-Bridge helps educational institutions track student placement readiness through three role-based dashboards:
 - **Student Dashboard**: Practice company interviews, upload resumes, view PRS scores and mentor feedback
 - **Mentor Dashboard**: View assigned students, submit performance feedback and ratings
 - **Admin Dashboard**: Manage companies, questions, mentor assignments, score resumes, and view analytics
@@ -43,15 +43,15 @@ PRS = (0.5 × coding_score) + (0.3 × mock_score) + (0.2 × resume_score)
 ## Demo Credentials
 
 ### Student
-- Email: `Demo`
+- Email: `demo@ami-bridge.com`
 - Password: `12345`
 
 ### Mentor
-- Email: `mentor@skillbridge.com`
+- Email: `mentor@ami-bridge.com`
 - Password: `12345`
 
 ### Admin
-- Email: `admin@skillbridge.com`
+- Email: `admin@ami-bridge.com`
 - Password: `12345`
 
 ## Technical Stack

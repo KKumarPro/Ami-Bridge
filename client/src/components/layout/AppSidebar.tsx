@@ -60,8 +60,8 @@ export function AppSidebar() {
       <SidebarContent>
         <div className="p-4 mb-4">
           <h2 className="text-2xl font-bold text-primary font-display flex items-center gap-2">
-            <span className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-sm">SB</span>
-            SkillBridge
+            <span className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center text-sm">AB</span>
+            Ami-Bridge
           </h2>
         </div>
         <SidebarGroup>

@@ -18,8 +18,8 @@ export function HomePage() {
       <header className="border-b bg-background/80 backdrop-blur-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold">SB</div>
-            <span className="font-display font-bold text-xl tracking-tight">SkillBridge</span>
+            <div className="w-8 h-8 rounded-lg bg-primary text-primary-foreground flex items-center justify-center font-bold">AB</div>
+            <span className="font-display font-bold text-xl tracking-tight">Ami-Bridge</span>
           </div>
           <div className="flex gap-4">
             <Button variant="ghost" asChild className="hidden sm:inline-flex hover-elevate">
@@ -43,7 +43,7 @@ export function HomePage() {
               animate={{ opacity: 1, y: 0 }}
               className="text-5xl md:text-7xl font-bold font-display tracking-tight text-foreground max-w-4xl mx-auto leading-tight"
             >
-              Master your tech career with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">SkillBridge</span>
+              Master your tech career with <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Ami-Bridge</span>
             </motion.h1>
             
             <motion.p 

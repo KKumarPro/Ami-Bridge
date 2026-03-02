@@ -62,7 +62,7 @@ export async function registerRoutes(
 ): Promise<Server> {
   // Session middleware
   app.use(session({
-    secret: process.env.SESSION_SECRET || 'skillbridge-secret-key-change-in-production',
+    secret: process.env.SESSION_SECRET || 'ami-bridge-secret-key-change-in-production',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -530,22 +530,22 @@ async function seedDatabase() {
     console.log('Seeding database with extensive demo data...');
 
     // Try to get or create admin
-    let admin = await storage.getUserByEmail('admin@skillbridge.com');
+    let admin = await storage.getUserByEmail('admin@ami-bridge.com');
     if (!admin) {
       admin = await storage.createUser({
         name: 'Admin User',
-        email: 'admin@skillbridge.com',
+        email: 'admin@ami-bridge.com',
         password: await bcrypt.hash('12345', SALT_ROUNDS),
         role: 'admin'
       });
     }
 
     // Try to get or create mentor
-    let mentor = await storage.getUserByEmail('mentor@skillbridge.com');
+    let mentor = await storage.getUserByEmail('mentor@ami-bridge.com');
     if (!mentor) {
       mentor = await storage.createUser({
         name: 'Dr. Sarah Johnson',
-        email: 'mentor@skillbridge.com',
+        email: 'mentor@ami-bridge.com',
         password: await bcrypt.hash('12345', SALT_ROUNDS),
         role: 'mentor'
       });
@@ -563,7 +563,7 @@ async function seedDatabase() {
     const branches = ['Computer Science', 'Information Technology', 'Electronics', 'Mechanical', 'Civil'];
 
     for (let i = 0; i < studentNames.length; i++) {
-      const email = i === 0 ? 'demo@skillbridge.com' : `student${i + 1}@skillbridge.com`;
+      const email = i === 0 ? 'demo@ami-bridge.com' : `student${i + 1}@ami-bridge.com`;
       const existingUser = await storage.getUserByEmail(email);
       if (existingUser) continue;
 

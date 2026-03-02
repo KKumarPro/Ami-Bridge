@@ -66,7 +66,7 @@ export function AuthPage() {
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
         <div className="flex justify-center mb-6">
-          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-bold text-xl shadow-lg">SB</div>
+          <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-secondary text-white flex items-center justify-center font-bold text-xl shadow-lg">AB</div>
         </div>
         <h2 className="text-center text-3xl font-extrabold font-display text-foreground tracking-tight">
           {isLogin ? "Sign in to your account" : "Create your account"}
