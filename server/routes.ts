@@ -480,7 +480,15 @@ export async function registerRoutes(
       const resumesWithStudent = await Promise.all(
         resumes.map(async (resume) => {
           const student = await storage.getUserById(resume.studentId);
-          return { ...resume, student: { ...student, password: undefined } };
+          const profile = await storage.getStudentProfile(resume.studentId);
+          return { 
+            ...resume, 
+            student: { 
+              ...student, 
+              password: undefined,
+              profile 
+            } 
+          };
         })
       );
       res.json(resumesWithStudent);
