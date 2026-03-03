@@ -260,7 +260,20 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(mentorFeedback.createdAt));
   }
 
-  async countUsersByRole(role: string): Promise<number> {
+    async clearAllData(): Promise<void> {
+      const { mentorFeedback, attemptDetails, studentAttempts, resumes, mentorAssignments, studentProfiles, interviewQuestions, companies, users } = await import("@shared/schema");
+      await db.delete(mentorFeedback);
+      await db.delete(attemptDetails);
+      await db.delete(studentAttempts);
+      await db.delete(resumes);
+      await db.delete(mentorAssignments);
+      await db.delete(studentProfiles);
+      await db.delete(interviewQuestions);
+      await db.delete(companies);
+      await db.delete(users);
+    }
+
+async countUsersByRole(role: string): Promise<number> {
     const [result] = await db
       .select({ count: sql<number>`count(*)` })
       .from(users)
