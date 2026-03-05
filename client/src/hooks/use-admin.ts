@@ -52,10 +52,16 @@ export function useCreateCompany() {
         body: JSON.stringify(data),
         credentials: "include",
       });
-      if (!res.ok) throw new Error("Failed to create company");
+      if (!res.ok) {
+              const errorData = await res.json().catch(() => ({}));
+              throw new Error(errorData.message || "Failed to create company");
+            }
       return res.json();
     },
-    onSuccess: () => {
+    onError: (error: Error) => {
+            toast({ title: "Error", description: error.message, variant: "destructive" });
+          },
+          onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [api.admin.dashboard.path] });
       queryClient.invalidateQueries({ queryKey: [api.admin.companies.path] });
       queryClient.invalidateQueries({ queryKey: [api.student.companies.path] });

@@ -25,7 +25,7 @@ export function ReviewResumes() {
     setScore("");
   };
 
-  const branches = Array.from(new Set(resumes?.map((r: any) => r.student.profile?.branch).filter(Boolean) || []));
+  const branches = ["CSE", "Electronics", "Mechanical", "Civil", "Information Technology"];
 
   const filteredResumes = resumes?.filter((r: any) => {
     const matchesSearch = r.student.name.toLowerCase().includes(search.toLowerCase()) ||
