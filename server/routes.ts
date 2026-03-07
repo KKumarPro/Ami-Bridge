@@ -237,9 +237,8 @@ import type { Express } from "express";
       res.json(updated);
     });
 
-    // Seed check
-    const studentCount = await storage.countUsersByRole('student');
-    if (studentCount === 0) await seedDatabase();
+    // Seeding disabled - use manual seedDatabase call if needed
+    // if (studentCount === 0) await seedDatabase();
 
     return httpServer;
   }
